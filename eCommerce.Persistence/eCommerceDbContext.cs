@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using eCommerce.Domain.eCommerceAggregate;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace eCommerce.Persistence
         public eCommerceDbContext(DbContextOptions<eCommerceDbContext> options) : base(options)
         {
         }
-        //public DbSet<WorkPlace> WorkPlace { get; set; }
+        public DbSet<User> User { get; set; }
     }
 }
