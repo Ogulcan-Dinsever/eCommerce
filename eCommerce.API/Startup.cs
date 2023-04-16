@@ -44,7 +44,7 @@ namespace eCommerce.API
                 {
                     configure.MigrationsAssembly("eCommerce.Persistence");
                 });
-            });
+            }, ServiceLifetime.Transient);
 
 
             var config = new MapperConfiguration(cfg =>
@@ -52,24 +52,36 @@ namespace eCommerce.API
                 cfg.AddProfile<eCommerceAutoMapperProfile>();
             });
             services.AddSingleton(config.CreateMapper());
+            services.AddHttpContextAccessor();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(options =>
-               {
-                   options.RequireHttpsMetadata = false;
-                   options.SaveToken = true;
-                   options.TokenValidationParameters = new TokenValidationParameters
-                   {
-                       ValidateIssuer = false,
-                       ValidateAudience = false,
-                       ValidateLifetime = true,
-                       ValidateIssuerSigningKey = true,
-                       IssuerSigningKey = new SymmetricSecurityKey(
-                           Encoding.UTF8.GetBytes(Configuration["keyjwt"])),
-                       ClockSkew = TimeSpan.Zero
-                   };
-               });
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+       .AddJwtBearer(options =>
+       {
+           options.RequireHttpsMetadata = false;
+           options.SaveToken = true;
+
+           options.TokenValidationParameters = new TokenValidationParameters
+           {
+               ValidateIssuer = false,
+               ValidateAudience = false,
+               ValidateIssuerSigningKey = true,
+               IssuerSigningKey = new SymmetricSecurityKey(
+                   Encoding.UTF8.GetBytes(Configuration["keyjwt"])),
+           };
+       });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("IsAdmin", policy => policy.RequireClaim("role", "admin"));
+
+            });
+
 
             services.AddHttpContextAccessor();
 
@@ -82,6 +94,30 @@ namespace eCommerce.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "eCommerce.API", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Example: \"Bearer abcde1234\"",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                          new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+                    }
+                });
             });
 
             services.AddAutoMapper(typeof(Startup));
@@ -100,6 +136,8 @@ namespace eCommerce.API
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "eCommerce.API v1"));
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseStaticFiles();
 
             app.UseAuthorization();
