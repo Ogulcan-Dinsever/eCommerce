@@ -14,6 +14,8 @@ namespace eCommerce.Application.Mapping
         public eCommerceAutoMapperProfile()
         {
             CreateMap<User, GetUserResponse>().ReverseMap();
+            CreateMap<Brand, GetBrandResponse>().ReverseMap();
+            CreateMap<Category, GetCategoryResponse>().ReverseMap();
         }
     }
 }

@@ -35,7 +35,7 @@ namespace eCommerce.Application.Handlers.UserHandlers.CommandHandlers
             var isThere = await _repository.Any(x => x.Status && x.Email == request.Email);
 
             if (isThere)
-                return Response<GetUserResponse>.Fail("This email is already registered", 409);
+                return Response<GetUserResponse>.Fail("This email is already exist", 409);
 
             User user = new User
             {
