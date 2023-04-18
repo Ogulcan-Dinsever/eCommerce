@@ -14,5 +14,9 @@ namespace eCommerce.Persistence
         {
         }
         public DbSet<User> User { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Category> Category { get; set; }
+        public DbSet<Brand> Brand { get; set; }
+        public DbSet<Discount> Discount { get; set; }
     }
 }
