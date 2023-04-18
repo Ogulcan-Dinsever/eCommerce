@@ -1,4 +1,5 @@
 ﻿using eCommerce.Application.Commands.ProductCommands;
+using eCommerce.Application.Queries.ProductQueries;
 using eCommerce.Application.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,15 @@ namespace eCommerce.API.Controllers
         public async Task<IActionResult> CreateProduct(CreateProductCommand command)
         {
             var response = await _mediator.Send(command);
+
+            return CreateActionResultInstance(response);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllProduct")]
+        public async Task<IActionResult> GetAllProduct()
+        {
+            var response = await _mediator.Send(new GetAllProductQuery());
 
             return CreateActionResultInstance(response);
         }
