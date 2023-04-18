@@ -10,6 +10,7 @@ namespace eCommerce.Application.Commands.DiscountCommands
 {
     public class CreateDiscountCommand : IRequest<Response<bool>>
     {
+        public string DiscountName { get; set; }
         public decimal DiscountRate { get; set; }
         public string CategoryName { get; set; }
         public DateTime StartDate { get; set; }

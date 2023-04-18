@@ -10,6 +10,7 @@ namespace eCommerce.Domain.eCommerceAggregate
 {
     public class Discount : BaseEntity
     {
+        public string Name { get; set; }
         public int CategoryId { get; set; }
         public decimal DiscountRate { get; set; }
         public DateTime StartDate { get; set; }

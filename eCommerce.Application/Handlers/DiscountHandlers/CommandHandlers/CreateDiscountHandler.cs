@@ -40,6 +40,7 @@ namespace eCommerce.Application.Handlers.DiscountHandlers.CommandHandlers
 
             Discount discount = new Discount
             {
+                Name = request.DiscountName,
                 CategoryId = getCategory.Id,
                 DiscountRate = request.DiscountRate,
                 StartDate = request.StartDate,
