@@ -1,4 +1,5 @@
 ﻿using eCommerce.Application.Commands.ProductCommands;
+using eCommerce.Application.Queries.ProductQueries;
 using eCommerce.Application.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
