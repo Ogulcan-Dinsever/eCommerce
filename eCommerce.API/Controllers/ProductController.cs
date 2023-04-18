@@ -29,5 +29,14 @@ namespace eCommerce.API.Controllers
 
             return CreateActionResultInstance(response);
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllProduct")]
+        public async Task<IActionResult> GetAllProduct()
+        {
+            var response = await _mediator.Send(new GetAllProductQuery());
+
+            return CreateActionResultInstance(response);
+        }
     }
 }
