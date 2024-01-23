@@ -11,6 +11,6 @@ namespace eCommerce.Application.Queries.UserQueries
 {
     public class GetUserByIdQuery : IRequest<Response<GetUserResponse>>
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using eCommerce.Application.Repositories.Interfaces;
 using eCommerce.Domain.Common;
-using eCommerce.Persistence;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,52 +14,61 @@ namespace eCommerce.Application.Repositories
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly eCommerceDbContext _dbContext;
+        private readonly IMongoCollection<T> _dbContext;
+        private readonly IConfiguration _config;
 
-        public Repository(eCommerceDbContext dbContext)
+        public Repository(IOptions<T> config, IConfiguration configuration)
         {
-            _dbContext = dbContext;
+            _config = configuration;
+            var mongoClient = new MongoClient(_config.GetConnectionString("DefaultConnection"));
+            var mongoDatabase = mongoClient.GetDatabase("eCommerce");
+            _dbContext = mongoDatabase.GetCollection<T>(config.Value.ToString());
         }
 
-        public async Task<int> Create(T entity)
+        public async Task Create(T entity)
         {
-            await _dbContext.Set<T>().AddAsync(entity);
-            return await Save();
+            await _dbContext.InsertOneAsync(entity);
+        }
+        public async Task CreateAll(List<T> entities)
+        {
+            await _dbContext.InsertManyAsync(entities);
         }
 
         public async Task<T> Find(Expression<Func<T, bool>> expression)
         {
-            return await _dbContext.Set<T>().AsNoTracking().FirstOrDefaultAsync(expression);
+            var filter = Builders<T>.Filter.Where(expression);
+            var result = await _dbContext.Find(filter).FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<List<T>> GetAll()
         {
-            return await _dbContext.Set<T>().AsNoTracking().ToListAsync();
+            return await _dbContext.Find(u => true).ToListAsync();
         }
 
         public async Task<List<T>> GetAll(Expression<Func<T, bool>> expression)
         {
-            return await _dbContext.Set<T>().AsNoTracking().Where(expression).ToListAsync();
+            var filter = Builders<T>.Filter.Where(expression);
+            var result = await _dbContext.Find(filter).ToListAsync();
+            return result;
         }
 
-        public async Task<int> Update(T entity)
+        public async Task Update(T entity)
         {
-            _dbContext.Set<T>().Update(entity);
-            return await Save();
+            await _dbContext.ReplaceOneAsync(_ => _.Id == entity.Id, entity);
         }
 
-        private async Task<int> Save()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
         public async Task<bool> Any(Expression<Func<T, bool>> expression)
         {
-            return await _dbContext.Set<T>().AsNoTracking().AnyAsync(expression);
+            var filter = Builders<T>.Filter.Where(expression);
+            var count = await _dbContext.CountDocumentsAsync(filter);
+            return count > 0;
         }
-        public async Task<int> Delete(T entity)
+        public async Task<int> Delete(Expression<Func<T, bool>> entity)
         {
-            _dbContext.Set<T>().Remove(entity);
-            return await Save();
+            var filter = Builders<T>.Filter.Where(entity);
+            var result = _dbContext.FindOneAndDelete(filter);
+            return 1;
         }
     }
 }

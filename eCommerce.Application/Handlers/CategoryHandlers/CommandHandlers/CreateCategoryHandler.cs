@@ -41,9 +41,7 @@ namespace eCommerce.Application.Handlers.CategoryHandlers.CommandHandlers
                 Status = true
             };
 
-            var isSuccess = await _repository.Create(category) >= 1;
-            if (!isSuccess)
-                return Response<GetCategoryResponse>.Fail("Something wrong", 409);
+            await _repository.Create(category);
 
             var response = _mapper.Map<GetCategoryResponse>(category);
 

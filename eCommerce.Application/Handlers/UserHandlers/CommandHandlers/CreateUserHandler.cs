@@ -47,9 +47,7 @@ namespace eCommerce.Application.Handlers.UserHandlers.CommandHandlers
                 SurName = request.SurName,
             };
 
-            var isSuccess = await _repository.Create(user) >= 1;
-            if (!isSuccess)
-                return Response<GetUserResponse>.Fail("Something wrong", 409);
+            await _repository.Create(user);
 
             var response = _mapper.Map<GetUserResponse>(user);
 

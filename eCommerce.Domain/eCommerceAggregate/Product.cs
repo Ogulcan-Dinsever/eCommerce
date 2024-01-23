@@ -11,10 +11,10 @@ namespace eCommerce.Domain.eCommerceAggregate
     public class Product : BaseEntity
     {
         public string Name { get; set; }
-        public int BrandId { get; set; }
+        public string BrandId { get; set; }
         public decimal Price { get; set; }
 
         [Column("CategoryIds", TypeName = "integer[]")]
-        public List<int> CategoryIds { get; set; }
+        public List<string> CategoryIds { get; set; }
     }
 }

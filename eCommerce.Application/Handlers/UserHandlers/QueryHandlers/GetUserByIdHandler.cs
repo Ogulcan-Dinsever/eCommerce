@@ -26,7 +26,7 @@ namespace eCommerce.Application.Handlers.UserHandlers.QueryHandlers
         }
         public async Task<Response<GetUserResponse>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            if (request.Id == 0)
+            if (String.IsNullOrWhiteSpace(request.Id))
                 return Response<GetUserResponse>.Fail("Bad Request", 409);
 
             GetUserResponse response = new GetUserResponse();

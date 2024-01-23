@@ -51,7 +51,7 @@ namespace eCommerce.Application.Handlers.UserHandlers.CommandHandlers
             return Response<GetUserResponse>.Success(response, 200);
         }
 
-        private async Task<string> BuildToken(int userId, string userRole)
+        private async Task<string> BuildToken(string userId, string userRole)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["keyjwt"]));

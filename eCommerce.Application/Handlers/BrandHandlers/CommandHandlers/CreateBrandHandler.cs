@@ -41,9 +41,7 @@ namespace eCommerce.Application.Handlers.BrandHandlers.CommandHandlers
                 Status = true
             };
 
-            var isSuccess = await _repository.Create(brand) >= 1;
-            if (!isSuccess)
-                return Response<GetBrandResponse>.Fail("Something wrong", 409);
+            await _repository.Create(brand);
 
             var response = _mapper.Map<GetBrandResponse>(brand);
 

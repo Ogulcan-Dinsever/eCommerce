@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using eCommerce.Persistence;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -37,16 +36,6 @@ namespace eCommerce.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddDbContext<eCommerceDbContext>(opt =>
-            {
-                opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), configure =>
-                {
-                    configure.MigrationsAssembly("eCommerce.Persistence");
-                });
-            }, ServiceLifetime.Transient);
-
-
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<eCommerceAutoMapperProfile>();

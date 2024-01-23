@@ -42,7 +42,7 @@ namespace eCommerce.API.Controllers
         }
         
         [HttpGet("GetUserById")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var response = await _mediator.Send(new GetUserByIdQuery { Id = id });
 

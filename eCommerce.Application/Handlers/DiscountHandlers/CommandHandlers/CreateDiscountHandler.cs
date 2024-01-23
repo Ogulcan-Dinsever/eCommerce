@@ -50,9 +50,7 @@ namespace eCommerce.Application.Handlers.DiscountHandlers.CommandHandlers
                 Status = true
             };
 
-            var isSuccess = await _repository.Create(discount) >= 1;
-            if (!isSuccess)
-                return Response<bool>.Fail("Something wrong", 409);
+            await _repository.Create(discount);
 
             return Response<bool>.Success(true, 201);
         }

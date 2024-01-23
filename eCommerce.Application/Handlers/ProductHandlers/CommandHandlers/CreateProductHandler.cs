@@ -68,9 +68,7 @@ namespace eCommerce.Application.Handlers.ProductHandlers.CommandHandlers
                 Status = true
             };
 
-            var isSuccess = await _repository.Create(product) >= 1;
-            if (!isSuccess)
-                return Response<GetProductResponse>.Fail("Something wrong", 409);
+             await _repository.Create(product);
 
             GetProductResponse response = new GetProductResponse();
 
